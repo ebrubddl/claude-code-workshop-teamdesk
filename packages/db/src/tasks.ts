@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, isNotNull, isNull, sql } from "drizzle-orm";
 import { type Database, tasks } from "./schema.ts";
-import type { Task } from "./shared.ts";
+import type { Task, TaskPriority } from "./shared.ts";
 
 type TaskRow = typeof tasks.$inferSelect;
 
@@ -12,6 +12,7 @@ function toTask(row: TaskRow): Task {
     createdById: String(row.createdById),
     dueOn: row.dueOn,
     id: String(row.id),
+    priority: row.priority,
     title: row.title,
   };
 }
@@ -57,6 +58,7 @@ export async function insertTask(
     assigneeId: string | null;
     createdById: string;
     dueOn: string | null;
+    priority: TaskPriority;
     title: string;
   }
 ): Promise<Task> {
@@ -67,6 +69,7 @@ export async function insertTask(
       createdAt: new Date().toISOString(),
       createdById: Number(input.createdById),
       dueOn: input.dueOn,
+      priority: input.priority,
       title: input.title,
     })
     .returning();
@@ -84,6 +87,19 @@ export async function setTaskAssignee(
   const [row] = await db
     .update(tasks)
     .set({ assigneeId: assigneeId === null ? null : Number(assigneeId) })
+    .where(eq(tasks.id, Number(id)))
+    .returning();
+  return row ? toTask(row) : null;
+}
+
+export async function setTaskPriority(
+  db: Database,
+  id: string,
+  priority: TaskPriority
+): Promise<Task | null> {
+  const [row] = await db
+    .update(tasks)
+    .set({ priority })
     .where(eq(tasks.id, Number(id)))
     .returning();
   return row ? toTask(row) : null;
