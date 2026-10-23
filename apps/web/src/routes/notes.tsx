@@ -50,10 +50,10 @@ function NotesPage() {
     <main className="page-wrap px-4 py-12">
       <section className="max-w-3xl">
         <p className="island-kicker mb-3">Cloudflare D1</p>
-        <h1 className="display-title mb-4 text-4xl text-foreground sm:text-5xl">
+        <h1 className="display-title mb-4 text-5xl text-foreground sm:text-6xl">
           Notes
         </h1>
-        <p className="m-0 max-w-3xl text-base text-muted-foreground leading-8">
+        <p className="m-0 max-w-3xl text-foreground/70 text-lg leading-relaxed">
           A minimal round trip: a tRPC procedure reads and writes a{" "}
           <code>notes</code> table through <code>@repo/services</code>. Add a
           note and it lands in the D1 database bound as <code>DB</code>.
@@ -86,13 +86,13 @@ function NotesPage() {
 
       <section className="mt-10">
         {notes.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
+          <p className="glass px-5 py-4 text-foreground/60 text-sm [--glass-radius:22px]">
             No notes yet. Add the first one above.
           </p>
         ) : (
-          <ul className="m-0 list-none space-y-4 p-0">
+          <ul className="m-0 grid list-none gap-3 p-0">
             {notes.map((note) => (
-              <li className="border-border border-t pt-4" key={note.id}>
+              <li className="glass p-4 [--glass-radius:22px]" key={note.id}>
                 <p className="m-0 text-foreground">{note.text}</p>
                 <time
                   className="text-muted-foreground text-xs"

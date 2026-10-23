@@ -20,13 +20,17 @@ export default function RoomList({
   );
 
   if (rooms.length === 0) {
-    return <p className="text-muted-foreground text-sm">No rooms yet.</p>;
+    return (
+      <p className="glass px-5 py-4 text-foreground/60 text-sm [--glass-radius:22px]">
+        No rooms yet.
+      </p>
+    );
   }
   return (
-    <ul className="m-0 list-none space-y-4 p-0">
+    <ul className="m-0 grid list-none gap-3 p-0">
       {rooms.map((room) => (
         <li
-          className="flex items-center justify-between gap-4 border-border border-t pt-4"
+          className="glass flex items-center justify-between gap-4 p-4 [--glass-radius:22px]"
           key={room.id}
         >
           <div>

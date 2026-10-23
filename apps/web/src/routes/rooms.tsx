@@ -64,10 +64,10 @@ function RoomsPage() {
     <main className="page-wrap px-4 py-12">
       <section className="flex max-w-3xl flex-col gap-4">
         <p className="island-kicker m-0">Teamdesk</p>
-        <h1 className="display-title m-0 text-4xl text-foreground sm:text-5xl">
+        <h1 className="display-title m-0 text-5xl text-foreground sm:text-6xl">
           Rooms
         </h1>
-        <p className="m-0 text-base text-muted-foreground leading-8">
+        <p className="m-0 text-foreground/70 text-lg leading-relaxed">
           The rooms the team can book. Only admins can add or archive them.
         </p>
         <MemberPicker

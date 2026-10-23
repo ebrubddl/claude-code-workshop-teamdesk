@@ -1,11 +1,10 @@
-/* Liquid glass: Home and Tasks only.
-   Pages opt in by rendering `.glass-page` (the content wrapper) and
-   `.glass-backdrop` (the colour behind the glass). Everything below keys off
-   those, so the other pages keep the paper look. */
+/* Liquid glass, app-wide.
+   The root layout puts `.glass-page` on <body> and renders `.glass-backdrop`
+   (the colour behind the glass). `.island-shell` panels and `.display-title`
+   headings pick the look up automatically; list rows use `.glass` directly. */
 
-/* Apple-style blue accent, scoped to pages that opt in. Set on <body> so the
-   shared header picks it up too. */
-body:has(.glass-page) {
+/* Apple-style blue accent. Set on <body> so the header picks it up too. */
+body.glass-page {
   --primary: #0071e3;
   --primary-foreground: #fff;
   --ring: #0071e3;
@@ -13,7 +12,7 @@ body:has(.glass-page) {
   --glass-accent: #0071e3;
 }
 
-.dark body:has(.glass-page) {
+.dark body.glass-page {
   --brand-label: #6cb6ff;
 }
 
@@ -118,7 +117,8 @@ body:has(.glass-page) {
 
 /* The glass itself: translucent, blurred, with a bright top edge and a soft
    highlight in the corner where the light lands. */
-.glass {
+.glass,
+body.glass-page .island-shell {
   position: relative;
   background:
     radial-gradient(
@@ -142,7 +142,8 @@ body:has(.glass-page) {
   backdrop-filter: blur(30px) saturate(180%);
 }
 
-.dark .glass {
+.dark .glass,
+.dark body.glass-page .island-shell {
   background:
     radial-gradient(
       120% 90% at 0% 0%,
@@ -177,7 +178,7 @@ body:has(.glass-page) {
 }
 
 /* The shared header turns to glass on these pages. */
-body:has(.glass-page) header {
+body.glass-page header {
   background: rgba(255, 255, 255, 0.45);
   border-bottom-color: rgba(255, 255, 255, 0.5);
   box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.3);
@@ -185,16 +186,16 @@ body:has(.glass-page) header {
   backdrop-filter: blur(28px) saturate(180%);
 }
 
-.dark body:has(.glass-page) header {
+.dark body.glass-page header {
   background: rgba(20, 20, 35, 0.5);
   border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
-body:has(.glass-page) .nav-link::after {
+body.glass-page .nav-link::after {
   background: var(--glass-accent);
 }
 
-body:has(.glass-page) .site-footer {
+body.glass-page .site-footer {
   border-top-color: rgba(255, 255, 255, 0.4);
 }
 
@@ -329,7 +330,7 @@ body:has(.glass-page) .site-footer {
 
 @media (prefers-reduced-transparency: reduce) {
   .glass,
-  body:has(.glass-page) header {
+  body.glass-page header {
     background: var(--card);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
@@ -337,14 +338,50 @@ body:has(.glass-page) .site-footer {
 }
 
 /* Header type matches the glass pages instead of the serif/DM Sans pair. */
-body:has(.glass-page) header {
+body.glass-page header {
   font-family:
     -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter",
     system-ui, sans-serif;
 }
 
-body:has(.glass-page) header .font-heading {
+/* Headings and section titles lose the serif and take the system face. */
+body.glass-page .display-title {
+  font-family: inherit;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+body.glass-page .font-heading {
   font-family: inherit;
   font-weight: 650;
   letter-spacing: -0.025em;
+}
+
+.glass-page [data-slot="textarea"] {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 16px;
+  box-shadow:
+    inset 0 1px 2px rgba(20, 30, 90, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.dark .glass-page [data-slot="textarea"] {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* Inline code on glass. */
+body.glass-page code {
+  background: rgba(255, 255, 255, 0.45);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.dark body.glass-page code {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
 }

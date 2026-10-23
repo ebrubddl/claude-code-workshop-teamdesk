@@ -42,8 +42,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="flex min-h-dvh flex-col font-sans antialiased [overflow-wrap:anywhere] selection:bg-primary/30">
+      <body className="glass-page flex min-h-dvh flex-col font-sans antialiased [overflow-wrap:anywhere] selection:bg-primary/30">
         <TooltipProvider>
+          <div aria-hidden="true" className="glass-backdrop" />
           <Header />
           {/* flex-1 pushes the footer to the bottom on short pages. */}
           <div className="flex-1 pb-20">{children}</div>
