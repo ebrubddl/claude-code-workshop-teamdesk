@@ -19,6 +19,28 @@ export function formatUtcRange(startIso: string, endIso: string): string {
   return `${formatUtcTime(startIso)} to ${sameDay ? `${end} UTC` : end}`;
 }
 
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+/** "2026-10-30" -> "Fri 30 Oct". Built by hand for the same reason as above. */
+export function formatDay(day: string): string {
+  const date = new Date(`${day.slice(0, 10)}T00:00:00.000Z`);
+  return `${WEEKDAYS[date.getUTCDay()]} ${date.getUTCDate()} ${MONTHS[date.getUTCMonth()]}`;
+}
+
 /** Today's date in UTC, YYYY-MM-DD. */
 export function todayUtc(now: Date = new Date()): string {
   return now.toISOString().slice(0, 10);

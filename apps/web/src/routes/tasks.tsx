@@ -5,9 +5,11 @@ import {
   type TaskPriority,
 } from "@repo/db/shared";
 import { createFileRoute } from "@tanstack/react-router";
+import { ListFilter, ListTodo, Plus, X } from "lucide-react";
 import {
   type FormEvent,
   type MouseEvent,
+  type ReactNode,
   useCallback,
   useMemo,
   useState,
@@ -17,6 +19,14 @@ import MemberPicker from "#/components/member-picker";
 import PageError from "#/components/page-error";
 import TaskList from "#/components/task-list";
 import { Button } from "#/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "#/components/ui/empty";
 import { Input } from "#/components/ui/input";
 import {
   NativeSelect,
@@ -55,6 +65,29 @@ function TasksPage() {
         ? tasks
         : tasks.filter((task) => selectedPriorities.has(task.priority)),
     [selectedPriorities, tasks]
+  );
+
+  const summary = useMemo(() => {
+    const open = tasks.filter((task) => task.completedAt === null);
+    const byPriority: Record<TaskPriority, number> = {
+      high: 0,
+      low: 0,
+      medium: 0,
+    };
+    for (const task of tasks) {
+      byPriority[task.priority] += 1;
+    }
+    return {
+      byPriority,
+      done: tasks.length - open.length,
+      high: open.filter((task) => task.priority === "high").length,
+      open: open.length,
+    };
+  }, [tasks]);
+
+  const handleClearFilter = useCallback(
+    () => setSelectedPriorities(new Set()),
+    []
   );
 
   const handleTogglePriority = useCallback(
@@ -121,7 +154,7 @@ function TasksPage() {
   return (
     <main className="page-wrap px-4 py-12">
       <section className="flex max-w-3xl flex-col gap-4">
-        <p className="island-kicker m-0">Teamdesk</p>
+        <p className="island-kicker m-0">Planning</p>
         <h1 className="display-title m-0 text-4xl text-foreground sm:text-5xl">
           Tasks
         </h1>
@@ -135,48 +168,60 @@ function TasksPage() {
         />
       </section>
 
-      <form className="island-shell mt-10 p-6 sm:p-8" onSubmit={handleCreate}>
-        <p className="island-kicker mb-3">New task</p>
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Input
-            aria-label="Title"
-            maxLength={TASK_TITLE_MAX_LENGTH}
-            name="title"
-            placeholder="What needs doing?"
-            required
-          />
-          <NativeSelect
-            aria-label="Assignee"
-            className="shrink-0"
-            defaultValue=""
-            name="assigneeId"
-          >
-            <NativeSelectOption value="">Unassigned</NativeSelectOption>
-            {members.map((member) => (
-              <NativeSelectOption key={member.id} value={member.id}>
-                {member.name}
-              </NativeSelectOption>
-            ))}
-          </NativeSelect>
-          <NativeSelect
-            aria-label="Priority"
-            className="shrink-0"
-            defaultValue="medium"
-            name="priority"
-          >
-            {TASK_PRIORITIES.map((priority) => (
-              <NativeSelectOption key={priority} value={priority}>
-                {PRIORITY_LABELS[priority]}
-              </NativeSelectOption>
-            ))}
-          </NativeSelect>
-          <Input
-            aria-label="Due date"
-            className="shrink-0 sm:w-44"
-            name="dueOn"
-            type="date"
-          />
+      <dl className="mt-8 grid max-w-xl grid-cols-3 gap-3">
+        <Stat label="Open" value={summary.open} />
+        <Stat
+          highlight={summary.high > 0}
+          label="High priority"
+          value={summary.high}
+        />
+        <Stat label="Done" value={summary.done} />
+      </dl>
+
+      <form className="island-shell mt-8 p-6 sm:p-8" onSubmit={handleCreate}>
+        <p className="island-kicker mb-4">New task</p>
+        <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] sm:items-end">
+          <label className="grid gap-1.5 text-sm" htmlFor="task-title">
+            Title
+            <Input
+              id="task-title"
+              maxLength={TASK_TITLE_MAX_LENGTH}
+              name="title"
+              placeholder="What needs doing?"
+              required
+            />
+          </label>
+          <label className="grid gap-1.5 text-sm" htmlFor="task-assignee">
+            Assignee
+            <NativeSelect defaultValue="" id="task-assignee" name="assigneeId">
+              <NativeSelectOption value="">Unassigned</NativeSelectOption>
+              {members.map((member) => (
+                <NativeSelectOption key={member.id} value={member.id}>
+                  {member.name}
+                </NativeSelectOption>
+              ))}
+            </NativeSelect>
+          </label>
+          <label className="grid gap-1.5 text-sm" htmlFor="task-priority">
+            Priority
+            <NativeSelect
+              defaultValue="medium"
+              id="task-priority"
+              name="priority"
+            >
+              {TASK_PRIORITIES.map((priority) => (
+                <NativeSelectOption key={priority} value={priority}>
+                  {PRIORITY_LABELS[priority]}
+                </NativeSelectOption>
+              ))}
+            </NativeSelect>
+          </label>
+          <label className="grid gap-1.5 text-sm" htmlFor="task-due">
+            Due date
+            <Input className="sm:w-44" id="task-due" name="dueOn" type="date" />
+          </label>
           <Button disabled={createTask.pending} type="submit">
+            <Plus aria-hidden="true" />
             {createTask.pending ? "Adding…" : "Add task"}
           </Button>
         </div>
@@ -185,7 +230,14 @@ function TasksPage() {
 
       <section className="mt-10">
         <FormError message={updateTask.error} />
-        <div className="mb-4 flex flex-wrap gap-2">
+        <fieldset className="m-0 mb-2 flex min-w-0 flex-wrap items-center gap-2 border-0 p-0">
+          <legend className="sr-only">Filter by priority</legend>
+          <span
+            aria-hidden="true"
+            className="mr-1 text-muted-foreground text-sm"
+          >
+            Filter by priority
+          </span>
           {TASK_PRIORITIES.map((priority) => (
             <Button
               aria-pressed={selectedPriorities.has(priority)}
@@ -196,15 +248,43 @@ function TasksPage() {
               variant={selectedPriorities.has(priority) ? "default" : "outline"}
             >
               {PRIORITY_LABELS[priority]}
+              <span className="text-xs tabular-nums opacity-70">
+                {summary.byPriority[priority]}
+              </span>
             </Button>
           ))}
-        </div>
+          {selectedPriorities.size > 0 ? (
+            <Button onClick={handleClearFilter} size="sm" variant="ghost">
+              <X aria-hidden="true" />
+              Clear
+            </Button>
+          ) : null}
+        </fieldset>
         <TaskList
           disabled={updateTask.pending}
-          emptyMessage={
-            tasks.length > 0
-              ? "No tasks match the selected priorities."
-              : undefined
+          emptyState={
+            tasks.length > 0 ? (
+              <TasksEmpty
+                action={
+                  <Button
+                    onClick={handleClearFilter}
+                    size="sm"
+                    variant="outline"
+                  >
+                    Clear filter
+                  </Button>
+                }
+                description="No tasks match the selected priorities."
+                icon={<ListFilter />}
+                title="Nothing here"
+              />
+            ) : (
+              <TasksEmpty
+                description="Add the first one with the form above."
+                icon={<ListTodo />}
+                title="No tasks yet"
+              />
+            )
           }
           members={members}
           onAssign={handleAssign}
@@ -214,5 +294,53 @@ function TasksPage() {
         />
       </section>
     </main>
+  );
+}
+
+function Stat({
+  highlight = false,
+  label,
+  value,
+}: {
+  highlight?: boolean;
+  label: string;
+  value: number;
+}) {
+  return (
+    <div className="island-shell px-4 py-3">
+      <dt className="text-muted-foreground text-xs">{label}</dt>
+      <dd
+        className={
+          highlight
+            ? "m-0 font-heading text-3xl text-destructive tabular-nums"
+            : "m-0 font-heading text-3xl text-foreground tabular-nums"
+        }
+      >
+        {value}
+      </dd>
+    </div>
+  );
+}
+
+function TasksEmpty({
+  action,
+  description,
+  icon,
+  title,
+}: {
+  action?: ReactNode;
+  description: string;
+  icon: ReactNode;
+  title: string;
+}) {
+  return (
+    <Empty className="border border-border py-12">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">{icon}</EmptyMedia>
+        <EmptyTitle>{title}</EmptyTitle>
+        <EmptyDescription>{description}</EmptyDescription>
+      </EmptyHeader>
+      {action ? <EmptyContent>{action}</EmptyContent> : null}
+    </Empty>
   );
 }

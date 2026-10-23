@@ -5,13 +5,19 @@ import {
   type Task,
   type TaskPriority,
 } from "@repo/db/shared";
-import { type ChangeEvent, type MouseEvent, useCallback } from "react";
+import {
+  type ChangeEvent,
+  type MouseEvent,
+  type ReactNode,
+  useCallback,
+} from "react";
 import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
 import {
   NativeSelect,
   NativeSelectOption,
 } from "#/components/ui/native-select";
+import { formatDay } from "#/lib/datetime";
 
 const PRIORITY_BADGE_VARIANTS = {
   high: "destructive",
@@ -21,7 +27,7 @@ const PRIORITY_BADGE_VARIANTS = {
 
 interface TaskListProps {
   disabled: boolean;
-  emptyMessage?: string;
+  emptyState: ReactNode;
   members: readonly Member[];
   onAssign: (taskId: string, assigneeId: string | null) => void;
   onComplete: (taskId: string) => void;
@@ -31,7 +37,7 @@ interface TaskListProps {
 
 export default function TaskList({
   disabled,
-  emptyMessage = "No tasks yet. Add the first one above.",
+  emptyState,
   members,
   onAssign,
   onComplete,
@@ -65,7 +71,7 @@ export default function TaskList({
   );
 
   if (tasks.length === 0) {
-    return <p className="text-muted-foreground text-sm">{emptyMessage}</p>;
+    return emptyState;
   }
   return (
     <ul className="m-0 list-none space-y-4 p-0">
@@ -93,10 +99,8 @@ export default function TaskList({
               </Badge>
             </div>
             <p className="m-0 text-muted-foreground text-xs">
-              {task.dueOn ? `Due ${task.dueOn}` : "No due date"}
-              {task.completedAt
-                ? `, done ${task.completedAt.slice(0, 10)}`
-                : ""}
+              {task.dueOn ? `Due ${formatDay(task.dueOn)}` : "No due date"}
+              {task.completedAt ? `, done ${formatDay(task.completedAt)}` : ""}
             </p>
           </div>
           <div className="flex items-center gap-2">

@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import {
+  formatDay,
   formatUtc,
   formatUtcRange,
   formatUtcTime,
@@ -40,5 +41,10 @@ describe("datetime", () => {
 
   test("isoFromDayAndTime rejects a bad time", () => {
     expect(() => isoFromDayAndTime("2026-10-20", "25:00")).toThrow();
+  });
+
+  test("formatDay shows weekday, day and month", () => {
+    expect(formatDay("2026-10-30")).toBe("Fri 30 Oct");
+    expect(formatDay("2026-01-04T12:00:00.000Z")).toBe("Sun 4 Jan");
   });
 });
