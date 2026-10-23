@@ -1,3 +1,4 @@
+import { TASK_PRIORITIES } from "@repo/db/shared";
 import { createTaskInput } from "@repo/services/tasks";
 import { z } from "zod";
 import { publicProcedure, router } from "../init.ts";
@@ -30,4 +31,19 @@ export const tasksRouter = router({
   list: publicProcedure
     .input(z.object({ assigneeId: z.string().optional() }).optional())
     .query(({ ctx, input }) => ctx.services.tasks.list(input)),
+  setPriority: publicProcedure
+    .input(
+      z.object({
+        actorId: z.string(),
+        priority: z.enum(TASK_PRIORITIES),
+        taskId: z.string(),
+      })
+    )
+    .mutation(({ ctx, input }) =>
+      ctx.services.tasks.setPriority(
+        input.actorId,
+        input.taskId,
+        input.priority
+      )
+    ),
 });
