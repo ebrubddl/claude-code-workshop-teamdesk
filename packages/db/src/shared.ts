@@ -73,4 +73,9 @@ export const MAX_BOOKINGS_PER_MEMBER_PER_DAY = 3;
 export const TASK_TITLE_MAX_LENGTH = 160;
 export const TASK_PRIORITIES = ["low", "medium", "high"] as const;
 export type TaskPriority = (typeof TASK_PRIORITIES)[number];
+export const PRIORITY_LABELS: Record<TaskPriority, string> = {
+  high: "High",
+  low: "Low",
+  medium: "Medium",
+};
 export const ANNOUNCEMENT_BODY_MAX_LENGTH = 1000;

@@ -1,6 +1,17 @@
-import { TASK_TITLE_MAX_LENGTH } from "@repo/db/shared";
+import {
+  PRIORITY_LABELS,
+  TASK_PRIORITIES,
+  TASK_TITLE_MAX_LENGTH,
+  type TaskPriority,
+} from "@repo/db/shared";
 import { createFileRoute } from "@tanstack/react-router";
-import { type FormEvent, useCallback } from "react";
+import {
+  type FormEvent,
+  type MouseEvent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import FormError from "#/components/form-error";
 import MemberPicker from "#/components/member-picker";
 import PageError from "#/components/page-error";
@@ -34,6 +45,31 @@ function TasksPage() {
   const createTask = useAction();
   const updateTask = useAction();
   const actorId = actingMember?.id ?? "";
+  const [selectedPriorities, setSelectedPriorities] = useState<
+    ReadonlySet<TaskPriority>
+  >(new Set());
+
+  const visibleTasks = useMemo(
+    () =>
+      selectedPriorities.size === 0
+        ? tasks
+        : tasks.filter((task) => selectedPriorities.has(task.priority)),
+    [selectedPriorities, tasks]
+  );
+
+  const handleTogglePriority = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      const priority = event.currentTarget.value as TaskPriority;
+      setSelectedPriorities((current) => {
+        const next = new Set(current);
+        if (!next.delete(priority)) {
+          next.add(priority);
+        }
+        return next;
+      });
+    },
+    []
+  );
 
   const handleCreate = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -46,6 +82,7 @@ function TasksPage() {
           task: {
             assigneeId: String(data.get("assigneeId") ?? "") || null,
             dueOn: String(data.get("dueOn") ?? "") || null,
+            priority: String(data.get("priority") ?? "medium") as TaskPriority,
             title: String(data.get("title") ?? ""),
           },
         })
@@ -69,6 +106,14 @@ function TasksPage() {
     (taskId: string, assigneeId: string | null) =>
       updateTask.run(() =>
         getTrpc().tasks.assign.mutate({ actorId, assigneeId, taskId })
+      ),
+    [actorId, updateTask.run]
+  );
+
+  const handleSetPriority = useCallback(
+    (taskId: string, priority: TaskPriority) =>
+      updateTask.run(() =>
+        getTrpc().tasks.setPriority.mutate({ actorId, priority, taskId })
       ),
     [actorId, updateTask.run]
   );
@@ -108,6 +153,17 @@ function TasksPage() {
               </NativeSelectOption>
             ))}
           </NativeSelect>
+          <NativeSelect
+            aria-label="Priority"
+            defaultValue="medium"
+            name="priority"
+          >
+            {TASK_PRIORITIES.map((priority) => (
+              <NativeSelectOption key={priority} value={priority}>
+                {PRIORITY_LABELS[priority]}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
           <Input
             aria-label="Due date"
             className="sm:w-44"
@@ -123,12 +179,32 @@ function TasksPage() {
 
       <section className="mt-10">
         <FormError message={updateTask.error} />
+        <div className="mb-4 flex flex-wrap gap-2">
+          {TASK_PRIORITIES.map((priority) => (
+            <Button
+              aria-pressed={selectedPriorities.has(priority)}
+              key={priority}
+              onClick={handleTogglePriority}
+              size="sm"
+              value={priority}
+              variant={selectedPriorities.has(priority) ? "default" : "outline"}
+            >
+              {PRIORITY_LABELS[priority]}
+            </Button>
+          ))}
+        </div>
         <TaskList
           disabled={updateTask.pending}
+          emptyMessage={
+            tasks.length > 0
+              ? "No tasks match the selected priorities."
+              : undefined
+          }
           members={members}
           onAssign={handleAssign}
           onComplete={handleComplete}
-          tasks={tasks}
+          onSetPriority={handleSetPriority}
+          tasks={visibleTasks}
         />
       </section>
     </main>
