@@ -385,3 +385,154 @@ body.glass-page code {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.14);
 }
+
+/* Glass cursor: the system arrow is hidden only once the component has
+   mounted on a fine pointer, so touch and no-JS keep the normal cursor. */
+html.has-glass-cursor,
+html.has-glass-cursor * {
+  cursor: none !important;
+}
+
+.glass-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2147483000;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.glass-cursor[data-active="true"] {
+  opacity: 1;
+}
+
+.glass-cursor-lens,
+.glass-cursor-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+/* The droplet: clear glass with a bright rim and a soft blue refraction. */
+.glass-cursor-lens {
+  width: 22px;
+  height: 22px;
+  background:
+    radial-gradient(
+      circle at 30% 28%,
+      rgba(255, 255, 255, 0.95),
+      rgba(255, 255, 255, 0.15) 55%
+    ),
+    radial-gradient(circle at 70% 80%, rgba(10, 132, 255, 0.4), transparent 60%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -2px 4px rgba(10, 80, 200, 0.2),
+    0 6px 16px -4px rgba(20, 40, 140, 0.4);
+  -webkit-backdrop-filter: blur(1.5px) saturate(170%) brightness(1.08);
+  backdrop-filter: blur(1.5px) saturate(170%) brightness(1.08);
+  transition:
+    width 260ms cubic-bezier(0.2, 0.9, 0.3, 1.2),
+    height 260ms cubic-bezier(0.2, 0.9, 0.3, 1.2),
+    border-radius 260ms ease,
+    background-color 200ms ease,
+    opacity 200ms ease;
+}
+
+.glass-cursor-dot {
+  width: 5px;
+  height: 5px;
+  background: #0071e3;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+  transition:
+    opacity 150ms ease,
+    width 150ms ease,
+    height 150ms ease;
+}
+
+.glass-cursor[data-state="link"] .glass-cursor-lens {
+  width: 52px;
+  height: 52px;
+  background:
+    radial-gradient(
+      circle at 30% 28%,
+      rgba(255, 255, 255, 0.7),
+      rgba(255, 255, 255, 0.08) 60%
+    ),
+    radial-gradient(
+      circle at 70% 80%,
+      rgba(10, 132, 255, 0.28),
+      transparent 65%
+    );
+  border-color: rgba(255, 255, 255, 1);
+  -webkit-backdrop-filter: blur(0) saturate(230%) brightness(1.12);
+  backdrop-filter: blur(0) saturate(230%) brightness(1.12);
+}
+
+.glass-cursor[data-state="link"] .glass-cursor-dot {
+  width: 4px;
+  height: 4px;
+}
+
+/* Over a text field the droplet becomes a thin caret. */
+.glass-cursor[data-state="text"] .glass-cursor-lens {
+  width: 4px;
+  height: 26px;
+  background: #0071e3;
+  border-color: rgba(255, 255, 255, 0.9);
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(0, 113, 227, 0.55);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.glass-cursor[data-state="text"] .glass-cursor-dot {
+  opacity: 0;
+}
+
+/* Pressing squishes the droplet. */
+.glass-cursor[data-down="true"] .glass-cursor-lens {
+  width: 16px;
+  height: 16px;
+}
+
+.glass-cursor[data-down="true"][data-state="link"] .glass-cursor-lens {
+  width: 38px;
+  height: 38px;
+}
+
+.dark .glass-cursor-lens {
+  background:
+    radial-gradient(
+      circle at 30% 28%,
+      rgba(255, 255, 255, 0.55),
+      rgba(255, 255, 255, 0.06) 55%
+    ),
+    radial-gradient(
+      circle at 70% 80%,
+      rgba(100, 170, 255, 0.5),
+      transparent 60%
+    );
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -2px 4px rgba(120, 180, 255, 0.25),
+    0 6px 18px -4px rgba(0, 0, 0, 0.7);
+}
+
+.dark .glass-cursor-dot {
+  background: #6cb6ff;
+  box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.5);
+}
+
+@media (hover: none), (pointer: coarse) {
+  .glass-cursor {
+    display: none;
+  }
+}

@@ -3,6 +3,7 @@ import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TooltipProvider } from "#/components/ui/tooltip";
 import Footer from "../components/footer";
+import GlassCursor from "../components/glass-cursor";
 import Header from "../components/header";
 import ThemedToaster from "../components/themed-toaster";
 
@@ -49,6 +50,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           {/* flex-1 pushes the footer to the bottom on short pages. */}
           <div className="flex-1 pb-20">{children}</div>
           <Footer />
+
+          <GlassCursor />
           <ThemedToaster />
           <TanStackDevtools
             config={{
