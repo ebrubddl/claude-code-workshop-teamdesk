@@ -152,148 +152,181 @@ function TasksPage() {
   );
 
   return (
-    <main className="page-wrap px-4 py-12">
-      <section className="flex max-w-3xl flex-col gap-4">
-        <p className="island-kicker m-0">Planning</p>
-        <h1 className="display-title m-0 text-4xl text-foreground sm:text-5xl">
-          Tasks
-        </h1>
-        <p className="m-0 text-base text-muted-foreground leading-8">
-          Shared jobs for the team. Hand them out and tick them off.
-        </p>
-        <MemberPicker
-          members={members}
-          onChange={setActingMemberId}
-          value={actingMember?.id}
-        />
-      </section>
+    <>
+      <div aria-hidden="true" className="glass-backdrop" />
+      <main className="glass-page page-wrap px-4 pt-12 pb-12 sm:pt-16">
+        <section className="rise-in flex max-w-3xl flex-col gap-4">
+          <p className="island-kicker m-0">Planning</p>
+          <h1 className="glass-title m-0 text-5xl text-foreground sm:text-6xl">
+            Tasks
+          </h1>
+          <p className="m-0 max-w-xl text-foreground/70 text-lg leading-relaxed">
+            Shared jobs for the team. Hand them out and tick them off.
+          </p>
+          <MemberPicker
+            members={members}
+            onChange={setActingMemberId}
+            value={actingMember?.id}
+          />
+        </section>
 
-      <dl className="mt-8 grid max-w-xl grid-cols-3 gap-3">
-        <Stat label="Open" value={summary.open} />
-        <Stat
-          highlight={summary.high > 0}
-          label="High priority"
-          value={summary.high}
-        />
-        <Stat label="Done" value={summary.done} />
-      </dl>
+        <dl
+          className="rise-in mt-10 grid max-w-2xl grid-cols-3 gap-3"
+          style={{ animationDelay: "80ms" }}
+        >
+          <Stat label="Open" value={summary.open} />
+          <Stat
+            highlight={summary.high > 0}
+            label="High priority"
+            value={summary.high}
+          />
+          <Stat label="Done" value={summary.done} />
+        </dl>
 
-      <form className="island-shell mt-8 p-6 sm:p-8" onSubmit={handleCreate}>
-        <p className="island-kicker mb-4">New task</p>
-        <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] sm:items-end">
-          <label className="grid gap-1.5 text-sm" htmlFor="task-title">
-            Title
-            <Input
-              id="task-title"
-              maxLength={TASK_TITLE_MAX_LENGTH}
-              name="title"
-              placeholder="What needs doing?"
-              required
-            />
-          </label>
-          <label className="grid gap-1.5 text-sm" htmlFor="task-assignee">
-            Assignee
-            <NativeSelect defaultValue="" id="task-assignee" name="assigneeId">
-              <NativeSelectOption value="">Unassigned</NativeSelectOption>
-              {members.map((member) => (
-                <NativeSelectOption key={member.id} value={member.id}>
-                  {member.name}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
-          </label>
-          <label className="grid gap-1.5 text-sm" htmlFor="task-priority">
-            Priority
-            <NativeSelect
-              defaultValue="medium"
-              id="task-priority"
-              name="priority"
+        <form
+          className="rise-in glass mt-6 p-6 sm:p-8"
+          onSubmit={handleCreate}
+          style={{ animationDelay: "140ms" }}
+        >
+          <p className="island-kicker mb-4">New task</p>
+          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] sm:items-end">
+            <label
+              className="grid gap-1.5 font-medium text-sm"
+              htmlFor="task-title"
             >
-              {TASK_PRIORITIES.map((priority) => (
-                <NativeSelectOption key={priority} value={priority}>
-                  {PRIORITY_LABELS[priority]}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
-          </label>
-          <label className="grid gap-1.5 text-sm" htmlFor="task-due">
-            Due date
-            <Input className="sm:w-44" id="task-due" name="dueOn" type="date" />
-          </label>
-          <Button disabled={createTask.pending} type="submit">
-            <Plus aria-hidden="true" />
-            {createTask.pending ? "Adding…" : "Add task"}
-          </Button>
-        </div>
-        <FormError message={createTask.error} />
-      </form>
-
-      <section className="mt-10">
-        <FormError message={updateTask.error} />
-        <fieldset className="m-0 mb-2 flex min-w-0 flex-wrap items-center gap-2 border-0 p-0">
-          <legend className="sr-only">Filter by priority</legend>
-          <span
-            aria-hidden="true"
-            className="mr-1 text-muted-foreground text-sm"
-          >
-            Filter by priority
-          </span>
-          {TASK_PRIORITIES.map((priority) => (
+              Title
+              <Input
+                className="h-9"
+                id="task-title"
+                maxLength={TASK_TITLE_MAX_LENGTH}
+                name="title"
+                placeholder="What needs doing?"
+                required
+              />
+            </label>
+            <label
+              className="grid gap-1.5 font-medium text-sm"
+              htmlFor="task-assignee"
+            >
+              Assignee
+              <NativeSelect
+                className="[&_select]:h-9"
+                defaultValue=""
+                id="task-assignee"
+                name="assigneeId"
+              >
+                <NativeSelectOption value="">Unassigned</NativeSelectOption>
+                {members.map((member) => (
+                  <NativeSelectOption key={member.id} value={member.id}>
+                    {member.name}
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </label>
+            <label
+              className="grid gap-1.5 font-medium text-sm"
+              htmlFor="task-priority"
+            >
+              Priority
+              <NativeSelect
+                className="[&_select]:h-9"
+                defaultValue="medium"
+                id="task-priority"
+                name="priority"
+              >
+                {TASK_PRIORITIES.map((priority) => (
+                  <NativeSelectOption key={priority} value={priority}>
+                    {PRIORITY_LABELS[priority]}
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </label>
+            <label
+              className="grid gap-1.5 font-medium text-sm"
+              htmlFor="task-due"
+            >
+              Due date
+              <Input
+                className="h-9 sm:w-44"
+                id="task-due"
+                name="dueOn"
+                type="date"
+              />
+            </label>
             <Button
-              aria-pressed={selectedPriorities.has(priority)}
-              key={priority}
-              onClick={handleTogglePriority}
-              size="sm"
-              value={priority}
-              variant={selectedPriorities.has(priority) ? "default" : "outline"}
+              className="h-9 px-5"
+              disabled={createTask.pending}
+              type="submit"
             >
-              {PRIORITY_LABELS[priority]}
-              <span className="text-xs tabular-nums opacity-70">
-                {summary.byPriority[priority]}
-              </span>
+              <Plus aria-hidden="true" />
+              {createTask.pending ? "Adding…" : "Add task"}
             </Button>
-          ))}
-          {selectedPriorities.size > 0 ? (
-            <Button onClick={handleClearFilter} size="sm" variant="ghost">
-              <X aria-hidden="true" />
-              Clear
-            </Button>
-          ) : null}
-        </fieldset>
-        <TaskList
-          disabled={updateTask.pending}
-          emptyState={
-            tasks.length > 0 ? (
-              <TasksEmpty
-                action={
-                  <Button
-                    onClick={handleClearFilter}
-                    size="sm"
-                    variant="outline"
-                  >
-                    Clear filter
-                  </Button>
-                }
-                description="No tasks match the selected priorities."
-                icon={<ListFilter />}
-                title="Nothing here"
-              />
-            ) : (
-              <TasksEmpty
-                description="Add the first one with the form above."
-                icon={<ListTodo />}
-                title="No tasks yet"
-              />
-            )
-          }
-          members={members}
-          onAssign={handleAssign}
-          onComplete={handleComplete}
-          onSetPriority={handleSetPriority}
-          tasks={visibleTasks}
-        />
-      </section>
-    </main>
+          </div>
+          <FormError message={createTask.error} />
+        </form>
+
+        <section className="mt-10">
+          <FormError message={updateTask.error} />
+          <div className="mb-4 flex flex-wrap items-center gap-3">
+            <fieldset className="segmented">
+              <legend className="sr-only">Filter by priority</legend>
+              {TASK_PRIORITIES.map((priority) => (
+                <button
+                  aria-pressed={selectedPriorities.has(priority)}
+                  key={priority}
+                  onClick={handleTogglePriority}
+                  type="button"
+                  value={priority}
+                >
+                  {PRIORITY_LABELS[priority]}
+                  <span className="text-xs tabular-nums opacity-60">
+                    {summary.byPriority[priority]}
+                  </span>
+                </button>
+              ))}
+            </fieldset>
+            {selectedPriorities.size > 0 ? (
+              <Button onClick={handleClearFilter} size="sm" variant="ghost">
+                <X aria-hidden="true" />
+                Clear
+              </Button>
+            ) : null}
+          </div>
+          <TaskList
+            disabled={updateTask.pending}
+            emptyState={
+              tasks.length > 0 ? (
+                <TasksEmpty
+                  action={
+                    <Button
+                      onClick={handleClearFilter}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Clear filter
+                    </Button>
+                  }
+                  description="No tasks match the selected priorities."
+                  icon={<ListFilter />}
+                  title="Nothing here"
+                />
+              ) : (
+                <TasksEmpty
+                  description="Add the first one with the form above."
+                  icon={<ListTodo />}
+                  title="No tasks yet"
+                />
+              )
+            }
+            members={members}
+            onAssign={handleAssign}
+            onComplete={handleComplete}
+            onSetPriority={handleSetPriority}
+            tasks={visibleTasks}
+          />
+        </section>
+      </main>
+    </>
   );
 }
 
@@ -307,13 +340,13 @@ function Stat({
   value: number;
 }) {
   return (
-    <div className="island-shell px-4 py-3">
-      <dt className="text-muted-foreground text-xs">{label}</dt>
+    <div className="glass px-5 py-4 [--glass-radius:22px]">
+      <dt className="font-medium text-foreground/60 text-xs">{label}</dt>
       <dd
         className={
           highlight
-            ? "m-0 font-heading text-3xl text-destructive tabular-nums"
-            : "m-0 font-heading text-3xl text-foreground tabular-nums"
+            ? "m-0 font-semibold text-4xl text-destructive tabular-nums tracking-tight"
+            : "m-0 font-semibold text-4xl text-foreground tabular-nums tracking-tight"
         }
       >
         {value}
@@ -334,7 +367,7 @@ function TasksEmpty({
   title: string;
 }) {
   return (
-    <Empty className="border border-border py-12">
+    <Empty className="glass py-14">
       <EmptyHeader>
         <EmptyMedia variant="icon">{icon}</EmptyMedia>
         <EmptyTitle>{title}</EmptyTitle>
