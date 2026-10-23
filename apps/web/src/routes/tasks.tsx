@@ -145,7 +145,12 @@ function TasksPage() {
             placeholder="What needs doing?"
             required
           />
-          <NativeSelect aria-label="Assignee" defaultValue="" name="assigneeId">
+          <NativeSelect
+            aria-label="Assignee"
+            className="shrink-0"
+            defaultValue=""
+            name="assigneeId"
+          >
             <NativeSelectOption value="">Unassigned</NativeSelectOption>
             {members.map((member) => (
               <NativeSelectOption key={member.id} value={member.id}>
@@ -155,6 +160,7 @@ function TasksPage() {
           </NativeSelect>
           <NativeSelect
             aria-label="Priority"
+            className="shrink-0"
             defaultValue="medium"
             name="priority"
           >
@@ -166,7 +172,7 @@ function TasksPage() {
           </NativeSelect>
           <Input
             aria-label="Due date"
-            className="sm:w-44"
+            className="shrink-0 sm:w-44"
             name="dueOn"
             type="date"
           />
