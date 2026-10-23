@@ -1,11 +1,17 @@
 import type { Database } from "@repo/db";
-import { TASK_TITLE_MAX_LENGTH, type Task } from "@repo/db/shared";
+import {
+  TASK_PRIORITIES,
+  TASK_TITLE_MAX_LENGTH,
+  type Task,
+  type TaskPriority,
+} from "@repo/db/shared";
 import {
   completeTask,
   getTask,
   insertTask,
   listTasks,
   setTaskAssignee,
+  setTaskPriority,
 } from "@repo/db/tasks";
 import { z } from "zod";
 import { ForbiddenError, NotFoundError, ValidationError } from "./errors.ts";
@@ -14,6 +20,7 @@ import { requireMember } from "./members.ts";
 export const createTaskInput = z.object({
   assigneeId: z.string().nullable().default(null),
   dueOn: z.iso.date().nullable().default(null),
+  priority: z.enum(TASK_PRIORITIES).default("medium"),
   title: z
     .string()
     .trim()
@@ -41,6 +48,12 @@ export interface TasksService {
     today: string
   ) => Promise<Task>;
   list: (filter?: { assigneeId?: string }) => Promise<Task[]>;
+  /** Any member may change any task's priority, like `assign`. */
+  setPriority: (
+    actorId: string,
+    taskId: string,
+    priority: TaskPriority
+  ) => Promise<Task>;
 }
 
 export const createTasksService = (db: Database): TasksService => ({
@@ -90,4 +103,12 @@ export const createTasksService = (db: Database): TasksService => ({
     return await insertTask(db, { ...data, createdById: actorId });
   },
   list: (filter) => listTasks(db, filter),
+  setPriority: async (actorId, taskId, priority) => {
+    await requireMember(db, actorId);
+    const task = await setTaskPriority(db, taskId, priority);
+    if (!task) {
+      throw new NotFoundError("Task", taskId);
+    }
+    return task;
+  },
 });

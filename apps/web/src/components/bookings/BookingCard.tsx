@@ -23,7 +23,7 @@ export default function BookingCard({
   );
 
   return (
-    <li className="flex items-center justify-between gap-4 border-border border-t pt-4">
+    <li className="glass flex items-center justify-between gap-4 p-4 [--glass-radius:22px]">
       <div>
         <p className="m-0 font-semibold text-foreground">{booking.title}</p>
         <p className="m-0 text-muted-foreground text-sm">

@@ -157,10 +157,10 @@ function BookingsPage() {
     <main className="page-wrap px-4 py-12">
       <section className="flex max-w-3xl flex-col gap-4">
         <p className="island-kicker m-0">Teamdesk</p>
-        <h1 className="display-title m-0 text-4xl text-foreground sm:text-5xl">
+        <h1 className="display-title m-0 text-5xl text-foreground sm:text-6xl">
           Bookings
         </h1>
-        <p className="m-0 text-base text-muted-foreground leading-8">
+        <p className="m-0 text-foreground/70 text-lg leading-relaxed">
           Pick a room and a day to see who has it, then book a slot. All times
           are UTC.
         </p>
@@ -219,7 +219,7 @@ function BookingsPage() {
           </section>
         </>
       ) : (
-        <p className="mt-10 text-muted-foreground text-sm">
+        <p className="glass mt-10 px-5 py-4 text-foreground/60 text-sm [--glass-radius:22px]">
           There are no rooms yet. Add one on the Rooms page.
         </p>
       )}

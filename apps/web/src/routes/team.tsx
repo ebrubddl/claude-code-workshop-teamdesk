@@ -92,10 +92,10 @@ function TeamPage() {
     <main className="page-wrap px-4 py-12">
       <section className="flex max-w-3xl flex-col gap-4">
         <p className="island-kicker m-0">Teamdesk</p>
-        <h1 className="display-title m-0 text-4xl text-foreground sm:text-5xl">
+        <h1 className="display-title m-0 text-5xl text-foreground sm:text-6xl">
           Team
         </h1>
-        <p className="m-0 text-base text-muted-foreground leading-8">
+        <p className="m-0 text-foreground/70 text-lg leading-relaxed">
           Who is on the team and what they need to know.
         </p>
         <MemberPicker
@@ -107,14 +107,27 @@ function TeamPage() {
 
       <section className="mt-10">
         <h2 className="mb-4 font-heading text-2xl text-foreground">Members</h2>
-        <ul className="m-0 list-none space-y-4 p-0">
+        <ul className="m-0 grid list-none gap-3 p-0">
           {members.map((member) => (
-            <li className="border-border border-t pt-4" key={member.id}>
-              <p className="m-0 font-semibold text-foreground">{member.name}</p>
-              <p className="m-0 text-muted-foreground text-sm">
-                {member.email}, {member.role}, joined{" "}
-                {formatUtc(member.joinedAt).slice(0, 10)}
-              </p>
+            <li
+              className="glass flex items-center gap-4 p-4 [--glass-radius:22px]"
+              key={member.id}
+            >
+              <span
+                aria-hidden="true"
+                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#0a84ff] to-[#bf5af2] font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_6px_14px_-6px_rgba(0,0,0,0.35)]"
+              >
+                {member.name.slice(0, 1)}
+              </span>
+              <div className="min-w-0">
+                <p className="m-0 font-semibold text-foreground">
+                  {member.name}
+                </p>
+                <p className="m-0 text-foreground/60 text-sm">
+                  {member.email}, {member.role}, joined{" "}
+                  {formatUtc(member.joinedAt).slice(0, 10)}
+                </p>
+              </div>
             </li>
           ))}
         </ul>

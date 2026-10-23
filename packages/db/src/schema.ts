@@ -9,6 +9,7 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
+import { TASK_PRIORITIES } from "./shared.ts";
 
 /**
  * Any drizzle SQLite instance, which is what every query function takes. D1
@@ -86,6 +87,9 @@ export const tasks = sqliteTable("tasks", {
   // Calendar date, YYYY-MM-DD, no time zone.
   dueOn: text("due_on"),
   id: integer("id").primaryKey({ autoIncrement: true }),
+  priority: text("priority", { enum: TASK_PRIORITIES })
+    .notNull()
+    .default("medium"),
   title: text("title").notNull(),
 });
 
